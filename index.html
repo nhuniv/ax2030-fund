@@ -87,7 +87,7 @@
   @keyframes introOut { to { opacity: 0; visibility: hidden; } }
 
   /* ---------- 1. 표지 ---------- */
-  .hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; overflow: hidden;
+  .hero { position: relative; min-height: 82svh; display: flex; flex-direction: column; overflow: hidden;
     background: radial-gradient(120% 60% at 50% 0%, #10368A 0%, #0A1F5A 40%, var(--bg1) 80%); }
   .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
   .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 140px; background: linear-gradient(transparent, var(--bg1)); pointer-events: none; z-index: 2; }
@@ -110,13 +110,18 @@
   .goal-meta b { color: #fff; }
   .slogan { margin: 24px 0 0; font-size: clamp(17px, 4.8vw, 19px); font-weight: 600; line-height: 1.55; color: var(--ink-2); --d: 900ms; }
   .slogan strong { color: #fff; }
-  .js .goal, .js .hero-cta { opacity: 0; transform: translateY(16px); transition: opacity 1s var(--ease) 1.2s, transform 1s var(--ease) 1.2s; }
-  .js .hero.in .goal, .js .hero.in .hero-cta { opacity: 1; transform: none; }
-  .hero-cta { margin-top: 26px; display: flex; justify-content: center; }
-  .scroll-cue { display: inline-flex; flex-direction: column; align-items: center; gap: 6px; font: 400 10px var(--en); letter-spacing: .3em; color: var(--ink-3); text-decoration: none; }
-  .scroll-cue i { width: 22px; height: 34px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,.4); position: relative; }
-  .scroll-cue i::after { content: ""; position: absolute; left: 50%; top: 7px; width: 4px; height: 7px; margin-left: -2px; border-radius: 2px; background: var(--sky); animation: cue 1.8s ease-in-out infinite; }
-  @keyframes cue { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(12px); opacity: 0; } }
+  .js .goal { opacity: 0; transform: translateY(16px); transition: opacity 1s var(--ease) 1.2s, transform 1s var(--ease) 1.2s; }
+  .js .hero.in .goal { opacity: 1; transform: none; }
+  /* 아래로 넘기기 안내: 첫 화면 아래쪽에 떠 있다가 조금이라도 내리면 사라짐 */
+  .scroll-cue { position: fixed; z-index: 38; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom)); transform: translate(-50%, 14px); display: flex; align-items: center; gap: 8px; padding: 10px 14px 10px 18px; border-radius: 999px; white-space: nowrap;
+    background: rgba(6,19,46,.78); border: 1px solid rgba(242,196,109,.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    color: #fff; font-size: 15px; font-weight: 800; text-decoration: none; opacity: 0; pointer-events: none;
+    transition: opacity .5s var(--ease), transform .5s var(--ease); animation: cueGlow 2.2s ease-out infinite; }
+  .scroll-cue.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+  .scroll-cue .chev { display: grid; width: 22px; height: 22px; place-items: center; border-radius: 50%; background: var(--gold-grad); color: #2A1A00; animation: cueBounce 1.2s ease-in-out infinite; }
+  .scroll-cue .chev svg { width: 14px; height: 14px; }
+  @keyframes cueBounce { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(4px); } }
+  @keyframes cueGlow { 0% { box-shadow: 0 10px 28px rgba(0,0,0,.45), 0 0 0 0 rgba(242,196,109,.5); } 100% { box-shadow: 0 10px 28px rgba(0,0,0,.45), 0 0 0 14px rgba(242,196,109,0); } }
 
   /* ---------- 2. 영상 ---------- */
   .film { padding-top: 24px; }
@@ -290,13 +295,12 @@
         </div>
       </div>
       <p class="slogan" data-split>농협의 미래 인재를<br><strong>농협대학교가 책임지겠습니다.</strong></p>
-      <div class="hero-cta"><a class="scroll-cue" href="#film"><i></i>SCROLL</a></div>
     </div>
   </header>
 
   <!-- 2. 영상 -->
   <section class="page film" id="film" aria-labelledby="t-film">
-    <h2 id="t-film" class="rv"><i class="pno">01</i>AX2030 이야기</h2>
+    <h2 id="t-film"><i class="pno">01</i>AX2030 이야기</h2>
     <div class="player rv" id="player" style="--d:120ms">
       <div class="cover">
         <button class="play" id="playBtn" type="button" aria-label="AX2030 기부 영상 재생, 1분 8초">
@@ -404,6 +408,7 @@
 </div>
 
 <div class="progress" id="progress" aria-hidden="true"></div>
+<a class="scroll-cue" id="cue" href="#film">아래로 넘겨 보세요<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></a>
 <nav class="fab" id="fab" aria-label="빠른 메뉴">
   <a class="fab-btn fab-give" href="#give" aria-label="기부 참여 방법으로 이동">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>기부</a>
@@ -511,7 +516,12 @@
     hero.classList.add('in');
     $('fab').classList.add('show');
     if (intro && intro.parentNode) intro.parentNode.removeChild(intro);
+    setTimeout(function () { if (!cueDone) cue.classList.add('show'); }, reduce ? 0 : 1600);
   }
+  /* 아래로 넘기기 안내: 한 번이라도 내리면 다시 띄우지 않음 */
+  var cue = $('cue'), cueDone = false;
+  function hideCue() { cueDone = true; cue.classList.remove('show'); }
+  cue.addEventListener('click', hideCue);
   if (reduce) { ready(); countUp(); }
   else {
     setTimeout(function () { hero.classList.add('in'); }, 1900);
@@ -591,6 +601,7 @@
     ticking = false;
     var max = document.documentElement.scrollHeight - window.innerHeight;
     prog.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, window.scrollY / max) : 0) + ')';
+    if (!cueDone && window.scrollY > 60) hideCue();
   }
   function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
   window.addEventListener('scroll', onScroll, { passive: true });
